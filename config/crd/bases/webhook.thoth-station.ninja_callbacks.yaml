@@ -35,13 +35,21 @@ spec:
           spec:
             description: CallbackSpec defines the desired state of Callback
             properties:
-              foo:
-                description: Foo is an example field of Callback. Edit callback_types.go
-                  to remove/update
+              deliveryRetryLimit:
+                format: int32
+                type: integer
+              url:
+                description: URL is the URL to be called back
                 type: string
+            required:
+            - url
             type: object
           status:
             description: CallbackStatus defines the observed state of Callback
+            properties:
+              phase:
+                description: Current condition of the Shower.
+                type: string
             type: object
         type: object
     served: true

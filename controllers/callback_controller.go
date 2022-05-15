@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (C) 2022 Christoph Görn
 
 This file is part of r-gespraech.

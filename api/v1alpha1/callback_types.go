@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (C) 2022 Christoph Görn
 
 This file is part of r-gespraech.
@@ -23,22 +23,22 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // CallbackSpec defines the desired state of Callback
 type CallbackSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Callback. Edit callback_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// URL is the URL to be called back
+	URL                string `json:"url"`
+	DeliveryRetryLimit *int32 `json:"deliveryRetryLimit,omitempty"`
 }
 
 // CallbackStatus defines the observed state of Callback
 type CallbackStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Current condition of the Shower.
+	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Phase",xDescriptors={"urn:alm:descriptor:io.kubernetes.phase'"}
+	//+optional
+	Phase string `json:"phase,omitempty"`
 }
 
 //+kubebuilder:object:root=true
