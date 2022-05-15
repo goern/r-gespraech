@@ -1,0 +1,20 @@
+# permissions for end users to view callbacks.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: callback-viewer-role
+rules:
+- apiGroups:
+  - webhook.thoth-station.ninja
+  resources:
+  - callbacks
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - webhook.thoth-station.ninja
+  resources:
+  - callbacks/status
+  verbs:
+  - get

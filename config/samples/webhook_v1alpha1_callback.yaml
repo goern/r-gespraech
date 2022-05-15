@@ -1,0 +1,6 @@
+apiVersion: webhook.thoth-station.ninja/v1alpha1
+kind: Callback
+metadata:
+  name: callback-sample
+spec:
+  # TODO(user): Add fields here

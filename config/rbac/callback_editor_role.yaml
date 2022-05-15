@@ -1,0 +1,24 @@
+# permissions for end users to edit callbacks.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: callback-editor-role
+rules:
+- apiGroups:
+  - webhook.thoth-station.ninja
+  resources:
+  - callbacks
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - webhook.thoth-station.ninja
+  resources:
+  - callbacks/status
+  verbs:
+  - get
