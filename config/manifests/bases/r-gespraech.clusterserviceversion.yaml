@@ -1,0 +1,54 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: r-gespraech.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Callback is the Schema for the callbacks API
+      displayName: Callback
+      kind: Callback
+      name: callbacks.webhook.thoth-station.ninja
+      statusDescriptors:
+      - description: Conditions is the list of error conditions for this resource
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      version: v1alpha1
+  description: This is a Kubernetes thingy to manage Webhook Callbacks.
+  displayName: r-gespraech
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - webhook
+  - callback
+  links:
+  - name: R Gespraech
+    url: https://r-gespraech.domain
+  maintainers:
+  - email: goern@b4mad.net
+    name: Christoph Görn
+  maturity: alpha
+  provider:
+    name: goern
+  version: 0.0.0

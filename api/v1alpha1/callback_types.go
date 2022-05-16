@@ -29,17 +29,23 @@ type CallbackSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// URL is the URL to be called back
-	URL                string `json:"url"`
-	RetryLimit *int32 `json:"retryLimit,omitempty"`
-	Payload string `json:"payload"`
+	URL string `json:"url"`
+	// Optional number of retries before marking this Callback failed.
+	// Defaults to 6
+	//+optional
+	BackoffLimit *int32 `json:"backoffLimit,omitempty"`
+	Payload      string `json:"payload"`
 }
 
 // CallbackStatus defines the observed state of Callback
 type CallbackStatus struct {
-	// Current condition of the Shower.
-	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Phase",xDescriptors={"urn:alm:descriptor:io.kubernetes.phase'"}
+	// The number of deliveries which reached phase Failed.
 	//+optional
-	Phase string `json:"phase,omitempty"`
+	Failed int32 `json:"failed,omitempty"`
+	// Conditions is the list of error conditions for this resource
+	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Conditions",xDescriptors={"urn:alm:descriptor:io.kubernetes.conditions"}
+	//+optional
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 //+kubebuilder:object:root=true

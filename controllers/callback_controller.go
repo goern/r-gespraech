@@ -22,18 +22,23 @@ package controllers
 import (
 	"context"
 
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	"github.com/goern/r-gespraech/api/v1alpha1"
 	webhookv1alpha1 "github.com/goern/r-gespraech/api/v1alpha1"
 )
 
 // CallbackReconciler reconciles a Callback object
 type CallbackReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme   *runtime.Scheme
+	Callback *v1alpha1.Callback
 }
 
 //+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks,verbs=get;list;watch;create;update;patch;delete
@@ -50,11 +55,40 @@ type CallbackReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *CallbackReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
+
+	var c webhookv1alpha1.Callback
+	err := r.Get(context.Background(), req.NamespacedName, &c)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// Request object not found, could have been deleted after reconcile request.
+			// Return and don't requeue
+			logger.Info("Callback resource not found. Ignoring since object must be deleted.")
+			return ctrl.Result{}, nil
+		}
+		// Error reading the object - requeue the request.
+		logger.Error(err, "Failed to get Callback.")
+		return ctrl.Result{}, err
+	}
 
 	// TODO(user): your logic here
+	if c.Spec.URL == "" {
+		logger.Info("URL was ''")
+		r.SetCondition("URL", metav1.ConditionFalse, "unparsableURL", "we cant parse the URL provided")
+	}
 
 	return ctrl.Result{}, nil
+}
+
+// Set status condition helper
+func (r *CallbackReconciler) SetCondition(conditionType string, status metav1.ConditionStatus, reason, message string) {
+	meta.SetStatusCondition(&r.Callback.Status.Conditions, metav1.Condition{
+		Type:               conditionType,
+		Status:             status,
+		Reason:             reason,
+		Message:            message,
+		ObservedGeneration: r.Callback.GetGeneration(),
+	})
 }
 
 // SetupWithManager sets up the controller with the Manager.

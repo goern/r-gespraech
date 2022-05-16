@@ -1,0 +1,27 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-webhook-thoth-station-ninja-v1alpha1-callback
+  failurePolicy: Fail
+  name: mcallback.kb.io
+  rules:
+  - apiGroups:
+    - webhook.thoth-station.ninja
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - callbacks
+  sideEffects: None

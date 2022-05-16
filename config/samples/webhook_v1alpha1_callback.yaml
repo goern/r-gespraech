@@ -4,6 +4,5 @@ metadata:
   name: callback-sample
 spec:
   url: https://localhost.local:8081/webhooks/callback.asp
-  retryLimit: 4
   payload: >
     {"status": "finished", "advise-id": "abc123"}
