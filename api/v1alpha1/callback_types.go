@@ -30,7 +30,8 @@ type CallbackSpec struct {
 
 	// URL is the URL to be called back
 	URL                string `json:"url"`
-	DeliveryRetryLimit *int32 `json:"deliveryRetryLimit,omitempty"`
+	RetryLimit *int32 `json:"retryLimit,omitempty"`
+	Payload string `json:"payload"`
 }
 
 // CallbackStatus defines the observed state of Callback

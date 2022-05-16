@@ -35,13 +35,16 @@ spec:
           spec:
             description: CallbackSpec defines the desired state of Callback
             properties:
-              deliveryRetryLimit:
+              payload:
+                type: string
+              retryLimit:
                 format: int32
                 type: integer
               url:
                 description: URL is the URL to be called back
                 type: string
             required:
+            - payload
             - url
             type: object
           status:

@@ -3,4 +3,7 @@ kind: Callback
 metadata:
   name: callback-sample
 spec:
-  # TODO(user): Add fields here
+  url: https://localhost.local:8081/webhooks/callback.asp
+  retryLimit: 4
+  payload: >
+    {"status": "finished", "advise-id": "abc123"}
