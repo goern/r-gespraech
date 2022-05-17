@@ -20,6 +20,12 @@ along with r-gespraech.  If not, see <http://www.gnu.org/licenses/>.
 package v1alpha1
 
 import (
+	"net/url"
+
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -35,7 +41,6 @@ func (r *Callback) SetupWebhookWithManager(mgr ctrl.Manager) error {
 }
 
 //+kubebuilder:webhook:path=/mutate-webhook-thoth-station-ninja-v1alpha1-callback,mutating=true,failurePolicy=fail,sideEffects=None,groups=webhook.thoth-station.ninja,resources=callbacks,verbs=create;update,versions=v1alpha1,name=mcallback.kb.io,admissionReviewVersions=v1
-
 var _ webhook.Defaulter = &Callback{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
@@ -46,4 +51,56 @@ func (r *Callback) Default() {
 		r.Spec.BackoffLimit = new(int32)
 		*r.Spec.BackoffLimit = 6
 	}
+}
+
+//+kubebuilder:webhook:verbs=create;update;delete,path=/validate-webhook-thoth-station-ninja-v1alpha1-callback,mutating=false,failurePolicy=fail,groups=webhook.thoth-station.ninja,resources=callbacks,versions=v1,name=vcallback.kb.io,sideEffects=None,admissionReviewVersions=v1
+var _ webhook.Validator = &Callback{}
+
+// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+func (r *Callback) ValidateCreate() error {
+	callbacklog.Info("validate create", "name", r.Name)
+
+	return r.validateCallback()
+}
+
+// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
+func (r *Callback) ValidateUpdate(old runtime.Object) error {
+	callbacklog.Info("validate update", "name", r.Name)
+
+	return r.validateCallback()
+}
+
+// ValidateDelete implements webhook.Validator so a webhook will be registered for the type
+func (r *Callback) ValidateDelete() error {
+	callbacklog.Info("validate delete", "name", r.Name)
+
+	// TODO(user): fill in your validation logic upon object deletion.
+	return nil
+}
+
+func (r *Callback) validateCallback() error {
+	var allErrs field.ErrorList
+	if err := r.validateCallbackSpec(); err != nil {
+		allErrs = append(allErrs, err)
+	}
+	if len(allErrs) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(
+		schema.GroupKind{Group: "webhooks.thoth-station.ninja", Kind: "Callback"},
+		r.Name, allErrs)
+}
+
+func (r *Callback) validateCallbackSpec() *field.Error {
+	return validateURLFormat(
+		r.Spec.URL,
+		field.NewPath("spec").Child("URL"))
+}
+
+func validateURLFormat(uRL string, fldPath *field.Path) *field.Error {
+	if _, err := url.Parse(uRL); err != nil {
+		return field.Invalid(fldPath, uRL, err.Error())
+	}
+	return nil
 }
