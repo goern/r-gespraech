@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: callbacks.webhook.thoth-station.ninja
+  name: callbacks.erinnerung.thoth-station.ninja
 spec:
-  group: webhook.thoth-station.ninja
+  group: erinnerung.thoth-station.ninja
   names:
     kind: Callback
     listKind: CallbackList

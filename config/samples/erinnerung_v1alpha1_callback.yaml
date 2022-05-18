@@ -1,8 +1,8 @@
-apiVersion: webhook.thoth-station.ninja/v1alpha1
+apiVersion: erinnerung.thoth-station.ninja/v1alpha1
 kind: Callback
 metadata:
   name: callback-sample
 spec:
-  url: https://localhost.local:8081/webhooks/callback.asp
+  url: https://localhost.local:8081/webhook/callback.asp
   payload: >
     {"status": "finished", "advise-id": "abc123"}

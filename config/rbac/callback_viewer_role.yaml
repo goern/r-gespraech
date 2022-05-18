@@ -4,17 +4,17 @@ kind: ClusterRole
 metadata:
   name: callback-viewer-role
 rules:
-- apiGroups:
-  - webhook.thoth-station.ninja
-  resources:
-  - callbacks
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - webhook.thoth-station.ninja
-  resources:
-  - callbacks/status
-  verbs:
-  - get
+  - apiGroups:
+      - erinnerung.thoth-station.ninja
+    resources:
+      - callbacks
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - erinnerung.thoth-station.ninja
+    resources:
+      - callbacks/status
+    verbs:
+      - get

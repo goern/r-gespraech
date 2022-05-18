@@ -40,7 +40,7 @@ func (r *Callback) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-//+kubebuilder:webhook:path=/mutate-webhook-thoth-station-ninja-v1alpha1-callback,mutating=true,failurePolicy=fail,sideEffects=None,groups=webhook.thoth-station.ninja,resources=callbacks,verbs=create;update,versions=v1alpha1,name=mcallback.kb.io,admissionReviewVersions=v1
+//+kubebuilder:webhook:path=/mutate-erinnerung-thoth-station-ninja-v1alpha1-callback,mutating=true,failurePolicy=fail,sideEffects=None,groups=erinnerung.thoth-station.ninja,resources=callbacks,verbs=create;update,versions=v1alpha1,name=mcallback.kb.io,admissionReviewVersions=v1
 var _ webhook.Defaulter = &Callback{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
@@ -53,7 +53,7 @@ func (r *Callback) Default() {
 	}
 }
 
-//+kubebuilder:webhook:verbs=create;update;delete,path=/validate-webhook-thoth-station-ninja-v1alpha1-callback,mutating=false,failurePolicy=fail,groups=webhook.thoth-station.ninja,resources=callbacks,versions=v1,name=vcallback.kb.io,sideEffects=None,admissionReviewVersions=v1
+//+kubebuilder:webhook:verbs=create;update;delete,path=/validate-erinnerung-thoth-station-ninja-v1alpha1-callback,mutating=false,failurePolicy=fail,groups=erinnerung.thoth-station.ninja,resources=callbacks,versions=v1,name=vcallback.kb.io,sideEffects=None,admissionReviewVersions=v1
 var _ webhook.Validator = &Callback{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
@@ -88,7 +88,7 @@ func (r *Callback) validateCallback() error {
 	}
 
 	return apierrors.NewInvalid(
-		schema.GroupKind{Group: "webhooks.thoth-station.ninja", Kind: "Callback"},
+		schema.GroupKind{Group: "erinnerung.thoth-station.ninja", Kind: "Callback"},
 		r.Name, allErrs)
 }
 

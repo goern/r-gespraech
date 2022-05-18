@@ -48,7 +48,7 @@ var _ = Describe("Callback controller", func() {
 			ctx := context.Background()
 			c := &webhookv1alpha1.Callback{
 				TypeMeta: metav1.TypeMeta{
-					APIVersion: "webhook.thoth-station.ninja/v1alpha1",
+					APIVersion: "erinnerung.thoth-station.ninja/v1alpha1",
 					Kind:       "Callback",
 				},
 				ObjectMeta: metav1.ObjectMeta{

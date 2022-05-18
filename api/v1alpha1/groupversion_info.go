@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with r-gespraech.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Package v1alpha1 contains API Schema definitions for the webhook v1alpha1 API group
+// Package v1alpha1 contains API Schema definitions for the erinnerung v1alpha1 API group
 //+kubebuilder:object:generate=true
-//+groupName=webhook.thoth-station.ninja
+//+groupName=erinnerung.thoth-station.ninja
 package v1alpha1
 
 import (
@@ -29,7 +29,7 @@ import (
 
 var (
 	// GroupVersion is group version used to register these objects
-	GroupVersion = schema.GroupVersion{Group: "webhook.thoth-station.ninja", Version: "v1alpha1"}
+	GroupVersion = schema.GroupVersion{Group: "erinnerung.thoth-station.ninja", Version: "v1alpha1"}
 
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
 	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}

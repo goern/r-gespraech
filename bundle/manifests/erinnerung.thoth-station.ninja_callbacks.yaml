@@ -5,7 +5,7 @@ metadata:
     cert-manager.io/inject-ca-from: r-gespraech-system/r-gespraech-serving-cert
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: callbacks.webhook.thoth-station.ninja
+  name: callbacks.erinnerung.thoth-station.ninja
 spec:
   conversion:
     strategy: Webhook
@@ -17,7 +17,7 @@ spec:
           path: /convert
       conversionReviewVersions:
       - v1
-  group: webhook.thoth-station.ninja
+  group: erinnerung.thoth-station.ninja
   names:
     kind: Callback
     listKind: CallbackList

@@ -12,11 +12,20 @@ resources:
     namespaced: true
   controller: true
   domain: thoth-station.ninja
-  group: webhook
+  group: erinnerung
   kind: Callback
   path: github.com/goern/r-gespraech/api/v1alpha1
   version: v1alpha1
   webhooks:
     defaulting: true
     webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: thoth-station.ninja
+  group: erinnerung
+  kind: CallbackPayload
+  path: github.com/goern/r-gespraech/api/v1alpha1
+  version: v1alpha1
 version: "3"

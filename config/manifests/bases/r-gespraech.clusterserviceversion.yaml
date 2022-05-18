@@ -10,10 +10,15 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: CallbackPayload is the Schema for the callbackpayloads API
+      displayName: Callback Payload
+      kind: CallbackPayload
+      name: callbackpayloads.erinnerung.thoth-station.ninja
+      version: v1alpha1
     - description: Callback is the Schema for the callbacks API
       displayName: Callback
       kind: Callback
-      name: callbacks.webhook.thoth-station.ninja
+      name: callbacks.erinnerung.thoth-station.ninja
       statusDescriptors:
       - description: Conditions is the list of error conditions for this resource
         displayName: Conditions
@@ -21,7 +26,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
       version: v1alpha1
-  description: This is a Kubernetes thingy to manage Webhook Callbacks.
+  description: This is a Kubernetes thingy to manage Erinnerungen.
   displayName: r-gespraech
   icon:
   - base64data: ""
@@ -40,7 +45,7 @@ spec:
   - supported: true
     type: AllNamespaces
   keywords:
-  - webhook
+  - erinnerung
   - callback
   links:
   - name: R Gespraech

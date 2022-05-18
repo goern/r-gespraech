@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/goern/r-gespraech/api/v1alpha1"
-	webhookv1alpha1 "github.com/goern/r-gespraech/api/v1alpha1"
+	erinnerungv1alpha1 "github.com/goern/r-gespraech/api/v1alpha1"
 )
 
 // CallbackReconciler reconciles a Callback object
@@ -46,9 +46,9 @@ const (
 	RequeueAfter = 10 * time.Second
 )
 
-//+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks/finalizers,verbs=update
+//+kubebuilder:rbac:groups=erinnerung.thoth-station.ninja,resources=callbacks,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=erinnerung.thoth-station.ninja,resources=callbacks/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=erinnerung.thoth-station.ninja,resources=callbacks/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -100,7 +100,7 @@ func (r *CallbackReconciler) SetCondition(conditionType string, status metav1.Co
 // SetupWithManager sets up the controller with the Manager.
 func (r *CallbackReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&webhookv1alpha1.Callback{}).
+		For(&erinnerungv1alpha1.Callback{}).
 		Complete(r)
 }
 

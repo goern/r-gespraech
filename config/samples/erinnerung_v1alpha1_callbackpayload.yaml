@@ -1,0 +1,6 @@
+apiVersion: erinnerung.thoth-station.ninja/v1alpha1
+kind: CallbackPayload
+metadata:
+  name: callbackpayload-sample
+spec:
+  # TODO(user): Add fields here

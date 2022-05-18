@@ -5,15 +5,23 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "webhook.thoth-station.ninja/v1alpha1",
+          "apiVersion": "erinnerung.thoth-station.ninja/v1alpha1",
           "kind": "Callback",
           "metadata": {
             "name": "callback-sample"
           },
           "spec": {
             "payload": "{\"status\": \"finished\", \"advise-id\": \"abc123\"}\n",
-            "url": "https://localhost.local:8081/webhooks/callback.asp"
+            "url": "https://localhost.local:8081/webhook/callback.asp"
           }
+        },
+        {
+          "apiVersion": "erinnerung.thoth-station.ninja/v1alpha1",
+          "kind": "CallbackPayload",
+          "metadata": {
+            "name": "callbackpayload-sample"
+          },
+          "spec": null
         }
       ]
     capabilities: Basic Install
@@ -25,10 +33,15 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: CallbackPayload is the Schema for the callbackpayloads API
+      displayName: Callback Payload
+      kind: CallbackPayload
+      name: callbackpayloads.erinnerung.thoth-station.ninja
+      version: v1alpha1
     - description: Callback is the Schema for the callbacks API
       displayName: Callback
       kind: Callback
-      name: callbacks.webhook.thoth-station.ninja
+      name: callbacks.erinnerung.thoth-station.ninja
       statusDescriptors:
       - description: Conditions is the list of error conditions for this resource
         displayName: Conditions
@@ -36,7 +49,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
       version: v1alpha1
-  description: This is a Kubernetes thingy to manage Webhook Callbacks.
+  description: This is a Kubernetes thingy to manage Erinnerungen.
   displayName: r-gespraech
   icon:
   - base64data: ""
@@ -46,7 +59,33 @@ spec:
       clusterPermissions:
       - rules:
         - apiGroups:
-          - webhook.thoth-station.ninja
+          - erinnerung.thoth-station.ninja
+          resources:
+          - callbackpayloads
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - erinnerung.thoth-station.ninja
+          resources:
+          - callbackpayloads/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - erinnerung.thoth-station.ninja
+          resources:
+          - callbackpayloads/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - erinnerung.thoth-station.ninja
           resources:
           - callbacks
           verbs:
@@ -58,13 +97,13 @@ spec:
           - update
           - watch
         - apiGroups:
-          - webhook.thoth-station.ninja
+          - erinnerung.thoth-station.ninja
           resources:
           - callbacks/finalizers
           verbs:
           - update
         - apiGroups:
-          - webhook.thoth-station.ninja
+          - erinnerung.thoth-station.ninja
           resources:
           - callbacks/status
           verbs:
@@ -103,7 +142,9 @@ spec:
             spec:
               containers:
               - args:
-                - --config=controller_manager_config.yaml
+                - --health-probe-bind-address=:8081
+                - --metrics-bind-address=127.0.0.1:8080
+                - --leader-elect
                 command:
                 - /manager
                 image: quay.io/goern/r-gespraech-controller:v0.0.2
@@ -215,7 +256,7 @@ spec:
   - supported: true
     type: AllNamespaces
   keywords:
-  - webhook
+  - erinnerung
   - callback
   links:
   - name: R Gespraech
@@ -232,9 +273,10 @@ spec:
     - v1
     containerPort: 443
     conversionCRDs:
-    - callbacks.webhook.thoth-station.ninja
+    - callbackpayloads.erinnerung.thoth-station.ninja
+    - callbacks.erinnerung.thoth-station.ninja
     deploymentName: r-gespraech-controller-manager
-    generateName: ccallbacks.kb.io
+    generateName: ccallbackpayloadscallbacks.kb.io
     sideEffects: None
     targetPort: 9443
     type: ConversionWebhook
@@ -247,7 +289,7 @@ spec:
     generateName: mcallback.kb.io
     rules:
     - apiGroups:
-      - webhook.thoth-station.ninja
+      - erinnerung.thoth-station.ninja
       apiVersions:
       - v1alpha1
       operations:
@@ -258,7 +300,7 @@ spec:
     sideEffects: None
     targetPort: 9443
     type: MutatingAdmissionWebhook
-    webhookPath: /mutate-webhook-thoth-station-ninja-v1alpha1-callback
+    webhookPath: /mutate-erinnerung-thoth-station-ninja-v1alpha1-callback
   - admissionReviewVersions:
     - v1
     containerPort: 443
@@ -267,7 +309,7 @@ spec:
     generateName: vcallback.kb.io
     rules:
     - apiGroups:
-      - webhook.thoth-station.ninja
+      - erinnerung.thoth-station.ninja
       apiVersions:
       - v1
       operations:
@@ -279,4 +321,4 @@ spec:
     sideEffects: None
     targetPort: 9443
     type: ValidatingAdmissionWebhook
-    webhookPath: /validate-webhook-thoth-station-ninja-v1alpha1-callback
+    webhookPath: /validate-erinnerung-thoth-station-ninja-v1alpha1-callback
