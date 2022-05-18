@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/goern/r-gespraech-controller
-  newTag: v0.0.1
+  newTag: v0.0.2

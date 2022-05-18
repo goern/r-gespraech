@@ -19,7 +19,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.19.0+git
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
-  name: r-gespraech.v0.0.1
+  name: r-gespraech.v0.0.2
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -103,6 +103,44 @@ spec:
             spec:
               containers:
               - args:
+                - --config=controller_manager_config.yaml
+                command:
+                - /manager
+                image: quay.io/goern/r-gespraech-controller:v0.0.2
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                name: manager
+                ports:
+                - containerPort: 9443
+                  name: webhook-server
+                  protocol: TCP
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                resources:
+                  limits:
+                    cpu: 500m
+                    memory: 128Mi
+                  requests:
+                    cpu: 10m
+                    memory: 64Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                volumeMounts:
+                - mountPath: /tmp/k8s-webhook-server/serving-certs
+                  name: cert
+                  readOnly: true
+                - mountPath: /controller_manager_config.yaml
+                  name: manager-config
+                  subPath: controller_manager_config.yaml
+              - args:
                 - --secure-listen-address=0.0.0.0:8443
                 - --upstream=http://127.0.0.1:8080/
                 - --logtostderr=true
@@ -120,39 +158,18 @@ spec:
                   requests:
                     cpu: 5m
                     memory: 64Mi
-              - args:
-                - --health-probe-bind-address=:8081
-                - --metrics-bind-address=127.0.0.1:8080
-                - --leader-elect
-                command:
-                - /manager
-                image: quay.io/goern/r-gespraech-controller:v0.0.1
-                livenessProbe:
-                  httpGet:
-                    path: /healthz
-                    port: 8081
-                  initialDelaySeconds: 15
-                  periodSeconds: 20
-                name: manager
-                readinessProbe:
-                  httpGet:
-                    path: /readyz
-                    port: 8081
-                  initialDelaySeconds: 5
-                  periodSeconds: 10
-                resources:
-                  limits:
-                    cpu: 500m
-                    memory: 128Mi
-                  requests:
-                    cpu: 10m
-                    memory: 64Mi
-                securityContext:
-                  allowPrivilegeEscalation: false
               securityContext:
                 runAsNonRoot: true
               serviceAccountName: r-gespraech-controller-manager
               terminationGracePeriodSeconds: 10
+              volumes:
+              - name: cert
+                secret:
+                  defaultMode: 420
+                  secretName: webhook-server-cert
+              - configMap:
+                  name: r-gespraech-manager-config
+                name: manager-config
       permissions:
       - rules:
         - apiGroups:
@@ -209,4 +226,57 @@ spec:
   maturity: alpha
   provider:
     name: goern
-  version: 0.0.1
+  version: 0.0.2
+  webhookdefinitions:
+  - admissionReviewVersions:
+    - v1
+    containerPort: 443
+    conversionCRDs:
+    - callbacks.webhook.thoth-station.ninja
+    deploymentName: r-gespraech-controller-manager
+    generateName: ccallbacks.kb.io
+    sideEffects: None
+    targetPort: 9443
+    type: ConversionWebhook
+    webhookPath: /convert
+  - admissionReviewVersions:
+    - v1
+    containerPort: 443
+    deploymentName: r-gespraech-controller-manager
+    failurePolicy: Fail
+    generateName: mcallback.kb.io
+    rules:
+    - apiGroups:
+      - webhook.thoth-station.ninja
+      apiVersions:
+      - v1alpha1
+      operations:
+      - CREATE
+      - UPDATE
+      resources:
+      - callbacks
+    sideEffects: None
+    targetPort: 9443
+    type: MutatingAdmissionWebhook
+    webhookPath: /mutate-webhook-thoth-station-ninja-v1alpha1-callback
+  - admissionReviewVersions:
+    - v1
+    containerPort: 443
+    deploymentName: r-gespraech-controller-manager
+    failurePolicy: Fail
+    generateName: vcallback.kb.io
+    rules:
+    - apiGroups:
+      - webhook.thoth-station.ninja
+      apiVersions:
+      - v1
+      operations:
+      - CREATE
+      - UPDATE
+      - DELETE
+      resources:
+      - callbacks
+    sideEffects: None
+    targetPort: 9443
+    type: ValidatingAdmissionWebhook
+    webhookPath: /validate-webhook-thoth-station-ninja-v1alpha1-callback

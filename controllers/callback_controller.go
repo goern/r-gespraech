@@ -21,6 +21,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -41,6 +42,10 @@ type CallbackReconciler struct {
 	Callback *v1alpha1.Callback
 }
 
+const (
+	RequeueAfter = 10 * time.Second
+)
+
 //+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=webhook.thoth-station.ninja,resources=callbacks/finalizers,verbs=update
@@ -56,28 +61,29 @@ type CallbackReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *CallbackReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
+	r.Callback = &v1alpha1.Callback{}
 
-	var c webhookv1alpha1.Callback
-	err := r.Get(context.Background(), req.NamespacedName, &c)
-	if err != nil {
+	if err := r.Get(ctx, req.NamespacedName, r.Callback); err != nil {
 		if errors.IsNotFound(err) {
-			// Request object not found, could have been deleted after reconcile request.
-			// Return and don't requeue
-			logger.Info("Callback resource not found. Ignoring since object must be deleted.")
+			logger.Info("Resource deleted")
 			return ctrl.Result{}, nil
 		}
-		// Error reading the object - requeue the request.
-		logger.Error(err, "Failed to get Callback.")
-		return ctrl.Result{}, err
+		logger.Error(err, "Unable to fetch reconciled resource")
+		return ctrl.Result{Requeue: true}, err
+	}
+
+	if !r.Callback.ObjectMeta.DeletionTimestamp.IsZero() {
+		logger.Info("Resource being delete, skipping further reconcile.")
+		return ctrl.Result{}, nil
 	}
 
 	// TODO(user): your logic here
-	if c.Spec.URL == "" {
+	if r.Callback.Spec.URL == "" {
 		logger.Info("URL was ''")
 		r.SetCondition("URL", metav1.ConditionFalse, "unparsableURL", "we cant parse the URL provided")
 	}
 
-	return ctrl.Result{}, nil
+	return r.UpdateStatusNow(ctx, nil)
 }
 
 // Set status condition helper
@@ -85,9 +91,9 @@ func (r *CallbackReconciler) SetCondition(conditionType string, status metav1.Co
 	meta.SetStatusCondition(&r.Callback.Status.Conditions, metav1.Condition{
 		Type:               conditionType,
 		Status:             status,
+		LastTransitionTime: metav1.Time{Time: time.Now()},
 		Reason:             reason,
 		Message:            message,
-		ObservedGeneration: r.Callback.GetGeneration(),
 	})
 }
 
@@ -96,4 +102,18 @@ func (r *CallbackReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&webhookv1alpha1.Callback{}).
 		Complete(r)
+}
+
+// Update object status. Returns a reconcile result
+func (r *CallbackReconciler) UpdateStatusNow(ctx context.Context, originalErr error) (ctrl.Result, error) {
+	logger := log.FromContext(ctx)
+	if err := r.Status().Update(ctx, r.Callback); err != nil {
+		logger.WithValues("reason", err.Error()).Info("Unable to update status, retrying")
+		return ctrl.Result{Requeue: true}, nil
+	}
+	if originalErr != nil {
+		return ctrl.Result{RequeueAfter: RequeueAfter}, originalErr
+	} else {
+		return ctrl.Result{}, nil
+	}
 }

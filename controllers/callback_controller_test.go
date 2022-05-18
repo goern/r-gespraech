@@ -56,7 +56,8 @@ var _ = Describe("Callback controller", func() {
 					Namespace: CallbackNamespace,
 				},
 				Spec: webhookv1alpha1.CallbackSpec{
-					URL: "broken://localhost.local:9191/page.asp",
+					URL:     "broken://localhost.local:9191/page.asp",
+					Payload: "{}",
 				},
 			}
 			Expect(k8sClient.Create(ctx, c)).Should(Succeed())
