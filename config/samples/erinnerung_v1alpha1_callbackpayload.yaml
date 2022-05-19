@@ -1,6 +1,10 @@
 apiVersion: erinnerung.thoth-station.ninja/v1alpha1
 kind: CallbackPayload
 metadata:
-  name: callbackpayload-sample
+  name: callbackpayload-abc123
+  labels:
+    adviser.thoth-station.ninja/adviser-id: abc123
 spec:
-  # TODO(user): Add fields here
+  data: "{'advise_document_id':'abc123','html_url': 'https://thoth-station.ninja/search/...'}"
+  selector:
+    adviser.thoth-station.ninja/adviser-id: abc123

@@ -1,6 +1,33 @@
+---
 apiVersion: erinnerung.thoth-station.ninja/v1alpha1
 kind: CallbackUrl
 metadata:
-  name: callbackurl-sample
+  name: callbackurl-abc123
+  labels:
+    adviser.thoth-station.ninja/adviser-id: abc123
 spec:
-  # TODO(user): Add fields here
+  url: https://localhost.local:8181/webhook/callback.asp
+  selector:
+    adviser.thoth-station.ninja/adviser-id: abc123
+---
+apiVersion: erinnerung.thoth-station.ninja/v1alpha1
+kind: CallbackUrl
+metadata:
+  name: callbackurl-xyz123
+  labels:
+    adviser.thoth-station.ninja/adviser-id: abc123
+spec:
+  url: https://localhost.local:8181/webhook/xyz_callback
+  selector:
+    adviser.thoth-station.ninja/adviser-id: abc123
+---
+apiVersion: erinnerung.thoth-station.ninja/v1alpha1
+kind: CallbackUrl
+metadata:
+  name: callbackurl-xzy789
+  labels:
+    adviser.thoth-station.ninja/adviser-id: xyz789
+spec:
+  url: https://localhost.local:8181/webhook/callback.asp
+  selector:
+    adviser.thoth-station.ninja/adviser-id: xyz789
