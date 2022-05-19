@@ -20,22 +20,22 @@ along with r-gespraech.  If not, see <http://www.gnu.org/licenses/>.
 package v1alpha1
 
 import (
-	"net/url"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CallbackUrlSpec defines the desired state of CallbackUrl
 type CallbackUrlSpec struct {
 	// Url is the Url to call back.
-	Url      url.URL              `json:"url"`
+	URL      string               `json:"url"`
 	Selector metav1.LabelSelector `json:"selector"`
 }
 
 // CallbackUrlStatus defines the observed state of CallbackUrl
 type CallbackUrlStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Conditions is the list of error conditions for this resource
+	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Conditions",xDescriptors={"urn:alm:descriptor:io.kubernetes.conditions"}
+	//+optional
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 //+kubebuilder:object:root=true

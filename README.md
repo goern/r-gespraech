@@ -10,7 +10,7 @@ kind create cluster
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 # build and load the images we need for the controller
 make docker-build
-kind load docker-image r-gespraech-controller:v0.0.1 --name kind
+kind load docker-image r-gespraech-controller:v0.0.2 --name kind
 # deploy our Operator
-make deploy IMG=r-gespraech-controller:v0.0.1
+make deploy IMG=r-gespraech-controller:v0.0.2
 ```

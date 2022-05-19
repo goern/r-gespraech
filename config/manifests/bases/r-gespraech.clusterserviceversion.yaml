@@ -10,7 +10,9 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: CallbackPayload is the Schema for the callbackpayloads API
+    - description: CallbackPayload is storing the actual Payload Data we want to send
+        back to any Callback URL. The web services receiving the Payload are determined
+        via metav1.LabelSelector `selector`.
       displayName: Callback Payload
       kind: CallbackPayload
       name: callbackpayloads.erinnerung.thoth-station.ninja
@@ -25,6 +27,13 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
+      version: v1alpha1
+    - description: CallbackUrl is a web service's URL to receive a Callback. The Callback
+        Payload to be send to the web service is determined via the metav1.LabelSelector
+        `selector`.
+      displayName: Callback Url
+      kind: CallbackUrl
+      name: callbackurls.erinnerung.thoth-station.ninja
       version: v1alpha1
   description: This is a Kubernetes thingy to manage Erinnerungen.
   displayName: r-gespraech

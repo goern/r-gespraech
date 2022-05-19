@@ -8,7 +8,8 @@ metadata:
 spec:
   url: https://localhost.local:8181/webhook/callback.asp
   selector:
-    adviser.thoth-station.ninja/adviser-id: abc123
+    matchLabels:
+      adviser.thoth-station.ninja/adviser-id: abc123
 ---
 apiVersion: erinnerung.thoth-station.ninja/v1alpha1
 kind: CallbackUrl
@@ -19,7 +20,8 @@ metadata:
 spec:
   url: https://localhost.local:8181/webhook/xyz_callback
   selector:
-    adviser.thoth-station.ninja/adviser-id: abc123
+    matchLabels:
+      adviser.thoth-station.ninja/adviser-id: abc123
 ---
 apiVersion: erinnerung.thoth-station.ninja/v1alpha1
 kind: CallbackUrl
@@ -30,4 +32,5 @@ metadata:
 spec:
   url: https://localhost.local:8181/webhook/callback.asp
   selector:
-    adviser.thoth-station.ninja/adviser-id: xyz789
+    matchLabels:
+      adviser.thoth-station.ninja/adviser-id: xyz789

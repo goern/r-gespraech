@@ -81,19 +81,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.CallbackReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Callback")
-		os.Exit(1)
-	}
-	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
-		if err = (&erinnerungv1alpha1.Callback{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Callback")
-			os.Exit(1)
-		}
-	}
 	if err = (&controllers.CallbackPayloadReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
