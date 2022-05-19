@@ -23,6 +23,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	PhaseFailed           = "Failed"
+	PhaseAwaitingPayloads = "AwaitingPayloads"
+	PhasePending          = "Pending"
+	PhaseOk               = "Ready"
+)
+
 // CallbackUrlSpec defines the desired state of CallbackUrl
 type CallbackUrlSpec struct {
 	// Url is the Url to call back.
@@ -32,6 +39,11 @@ type CallbackUrlSpec struct {
 
 // CallbackUrlStatus defines the observed state of CallbackUrl
 type CallbackUrlStatus struct {
+	// Status is and aggregated view of the Conditions
+	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Phase",xDescriptors={"urn:alm:descriptor:io.kubernetes.phase'"}
+	//+optional
+	Phase string `json:"phase,omitempty"`
+
 	// Conditions is the list of error conditions for this resource
 	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Conditions",xDescriptors={"urn:alm:descriptor:io.kubernetes.conditions"}
 	//+optional
@@ -58,6 +70,23 @@ type CallbackUrlList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []CallbackUrl `json:"items"`
+}
+
+// Aggregate phase from conditions
+func (u *CallbackUrl) AggregatePhase() string {
+	if len(u.Status.Conditions) == 0 {
+		return PhasePending
+	}
+
+	for _, c := range u.Status.Conditions {
+		switch c.Type {
+		case "NoAssociatedPayloads":
+			if c.Status == metav1.ConditionTrue {
+				return PhaseAwaitingPayloads
+			}
+		}
+	}
+	return PhaseOk
 }
 
 func init() {

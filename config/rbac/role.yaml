@@ -57,3 +57,23 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - erinnerung.thoth-station.ninka
+  resources:
+  - callbackpayloads
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - erinnerung.thoth-station.ninka
+  resources:
+  - callbackpayloads/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

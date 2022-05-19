@@ -163,6 +163,9 @@ spec:
                   - type
                   type: object
                 type: array
+              phase:
+                description: Status is and aggregated view of the Conditions
+                type: string
             type: object
         type: object
     served: true

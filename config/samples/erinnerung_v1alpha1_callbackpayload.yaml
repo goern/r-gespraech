@@ -5,7 +5,8 @@ metadata:
   labels:
     adviser.thoth-station.ninja/adviser-id: abc123
 spec:
-  data: "{'advise_document_id':'abc123','html_url': 'https://thoth-station.ninja/search/...'}"
+  data: >
+    {"advise_document_id":"abc123","html_url": "https://thoth-station.ninja/search/..."}
   selector:
     matchLabels:
       adviser.thoth-station.ninja/adviser-id: abc123

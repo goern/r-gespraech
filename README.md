@@ -14,3 +14,11 @@ kind load docker-image r-gespraech-controller:v0.0.2 --name kind
 # deploy our Operator
 make deploy IMG=r-gespraech-controller:v0.0.2
 ```
+
+## TODO
+
+- [WIP] watch for CallbackPayload create, so that CallbackURL reconciler runs
+
+## References
+
+- <https://maelvls.dev/kubernetes-conditions/#are-conditions-still-used>
