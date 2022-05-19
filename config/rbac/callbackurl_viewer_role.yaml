@@ -1,0 +1,20 @@
+# permissions for end users to view callbackurls.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: callbackurl-viewer-role
+rules:
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls/status
+  verbs:
+  - get

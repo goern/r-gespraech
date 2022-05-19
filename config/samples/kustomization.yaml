@@ -2,4 +2,5 @@
 resources:
   - erinnerung_v1alpha1_callback.yaml
   - erinnerung_v1alpha1_callbackpayload.yaml
+- erinnerung_v1alpha1_callbackurl.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

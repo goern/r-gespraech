@@ -57,3 +57,29 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls/status
+  verbs:
+  - get
+  - patch
+  - update

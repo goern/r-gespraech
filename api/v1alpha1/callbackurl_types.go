@@ -20,17 +20,20 @@ along with r-gespraech.  If not, see <http://www.gnu.org/licenses/>.
 package v1alpha1
 
 import (
+	"net/url"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// CallbackPayloadSpec defines the desired state of CallbackPayload
-type CallbackPayloadSpec struct {
-	Data     string               `json:"data"`
+// CallbackUrlSpec defines the desired state of CallbackUrl
+type CallbackUrlSpec struct {
+	// Url is the Url to call back.
+	Url      url.URL              `json:"url"`
 	Selector metav1.LabelSelector `json:"selector"`
 }
 
-// CallbackPayloadStatus defines the observed state of CallbackPayload
-type CallbackPayloadStatus struct {
+// CallbackUrlStatus defines the observed state of CallbackUrl
+type CallbackUrlStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -38,25 +41,25 @@ type CallbackPayloadStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// CallbackPayload is storing the actual Payload Data we want to send back to any Callback URL. The
-// web services receiving the Payload are determined via metav1.LabelSelector `selector`.
-type CallbackPayload struct {
+// CallbackUrl is a web service's URL to receive a Callback. The Callback Payload to be send to the
+// web service is determined via the metav1.LabelSelector `selector`.
+type CallbackUrl struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   CallbackPayloadSpec   `json:"spec,omitempty"`
-	Status CallbackPayloadStatus `json:"status,omitempty"`
+	Spec   CallbackUrlSpec   `json:"spec,omitempty"`
+	Status CallbackUrlStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// CallbackPayloadList contains a list of CallbackPayload
-type CallbackPayloadList struct {
+// CallbackUrlList contains a list of CallbackUrl
+type CallbackUrlList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []CallbackPayload `json:"items"`
+	Items           []CallbackUrl `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&CallbackPayload{}, &CallbackPayloadList{})
+	SchemeBuilder.Register(&CallbackUrl{}, &CallbackUrlList{})
 }

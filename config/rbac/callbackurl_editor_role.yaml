@@ -1,0 +1,24 @@
+# permissions for end users to edit callbackurls.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: callbackurl-editor-role
+rules:
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - erinnerung.thoth-station.ninja
+  resources:
+  - callbackurls/status
+  verbs:
+  - get

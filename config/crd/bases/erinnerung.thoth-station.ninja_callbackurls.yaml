@@ -5,21 +5,20 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: callbackpayloads.erinnerung.thoth-station.ninja
+  name: callbackurls.erinnerung.thoth-station.ninja
 spec:
   group: erinnerung.thoth-station.ninja
   names:
-    kind: CallbackPayload
-    listKind: CallbackPayloadList
-    plural: callbackpayloads
-    singular: callbackpayload
+    kind: CallbackUrl
+    listKind: CallbackUrlList
+    plural: callbackurls
+    singular: callbackurl
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: CallbackPayload is storing the actual Payload Data we want to
-          send back to any Callback URL.
+        description: CallbackUrl is the Schema for the callbackurls API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -34,15 +33,15 @@ spec:
           metadata:
             type: object
           spec:
-            description: CallbackPayloadSpec defines the desired state of CallbackPayload
+            description: CallbackUrlSpec defines the desired state of CallbackUrl
             properties:
-              data:
-                type: string
+              url:
+                description: Url is the Url to call back.
             required:
-            - data
+            - url
             type: object
           status:
-            description: CallbackPayloadStatus defines the observed state of CallbackPayload
+            description: CallbackUrlStatus defines the observed state of CallbackUrl
             type: object
         type: object
     served: true
