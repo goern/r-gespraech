@@ -30,22 +30,20 @@ type CallbackPayloadSpec struct {
 	Selector metav1.LabelSelector `json:"selector"`
 }
 
-type CallbackPayloadConditionType string
-
 // These are built-in conditions of a job.
 const (
 	// CallbackPayloadSending means that the payload is in the process of being send.
-	CallbackPayloadSending CallbackPayloadConditionType = "Sending"
+	CallbackPayloadSending string = "Sending"
 	// CallbackPayloadComplete means the payload has been successfully sent.
-	CallbackPayloadComplete CallbackPayloadConditionType = "Complete"
+	CallbackPayloadComplete string = "Complete"
 	// CallbackPayloadFailed means the payload has failed sending.
-	CallbackPayloadFailed CallbackPayloadConditionType = "Failed"
+	CallbackPayloadFailed string = "Failed"
 )
 
 // CallbackPayloadCondition describes current state of a payload.
 type CallbackPayloadCondition struct {
 	// Type of condition, Complete or Failed.
-	Type CallbackPayloadConditionType `json:"type"`
+	Type string `json:"type"`
 	// Status of the condition, one of True, False, Unknown.
 	Status corev1.ConditionStatus `json:"status"`
 	// Last time the condition was checked.
@@ -67,7 +65,7 @@ type CallbackPayloadStatus struct {
 	// Conditions is the list of error conditions for this resource
 	//+operator-sdk:csv:customresourcedefinitions:type=status,displayName="Conditions",xDescriptors={"urn:alm:descriptor:io.kubernetes.conditions"}
 	//+optional
-	Conditions []CallbackPayloadCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 //+kubebuilder:object:root=true
