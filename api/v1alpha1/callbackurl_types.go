@@ -24,10 +24,16 @@ import (
 )
 
 const (
-	PhaseFailed           = "Failed"
-	PhaseAwaitingPayloads = "AwaitingPayloads"
-	PhasePending          = "Pending"
-	PhaseOk               = "Ready"
+	PhaseFailed           string = "Failed"
+	PhaseAwaitingPayloads string = "AwaitingPayloads"
+	PhasePending          string = "Pending"
+	PhaseOk               string = "Ready"
+)
+
+// CallbackUrl Condition Types
+const (
+	AssociatedPayloads   string = "AssociatedPayloads "
+	NoAssociatedPayloads string = "NoAssociatedPayloads"
 )
 
 // CallbackUrlSpec defines the desired state of CallbackUrl
@@ -80,7 +86,7 @@ func (u *CallbackUrl) AggregatePhase() string {
 
 	for _, c := range u.Status.Conditions {
 		switch c.Type {
-		case "NoAssociatedPayloads":
+		case NoAssociatedPayloads:
 			if c.Status == metav1.ConditionTrue {
 				return PhaseAwaitingPayloads
 			}

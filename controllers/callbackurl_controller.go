@@ -124,10 +124,10 @@ func (r *CallbackUrlReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	if len(associatedPayloads.Items) == 0 {
 		meta.RemoveStatusCondition(&r.CallbackUrl.Status.Conditions, "AssociatedPayloads") // TODO err handler
-		r.SetCondition("NoAssociatedPayloads", metav1.ConditionTrue, "NoAssociatedPayloads", "there is not associated CallbackPayload for this CallbackURL")
+		r.SetCondition(v1alpha1.NoAssociatedPayloads, metav1.ConditionTrue, "NoAssociatedPayloads", "there is not associated CallbackPayload for this CallbackURL")
 	} else {
 		meta.RemoveStatusCondition(&r.CallbackUrl.Status.Conditions, "NoAssociatedPayloads") // TODO err handler
-		r.SetCondition("AssociatedPayloads", metav1.ConditionTrue, "AssociatedPayloads", fmt.Sprintf("there is %v associated CallbackPayload for this CallbackURL", len(associatedPayloads.Items)))
+		r.SetCondition(v1alpha1.AssociatedPayloads, metav1.ConditionTrue, "AssociatedPayloads", fmt.Sprintf("there is %v associated CallbackPayload for this CallbackURL", len(associatedPayloads.Items)))
 	}
 
 	// Update Payload conditions based on the Jobs this PayloadUrl owns.

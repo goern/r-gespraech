@@ -1,0 +1,3 @@
+SKIP_FETCH_TOOLS=1
+KUBEBUILDER_ASSETS=/home/goern/libexec/kubebuilder/bin
+ACK_GINKGO_DEPRECATIONS=1.16.5

@@ -30,7 +30,7 @@ type CallbackPayloadSpec struct {
 	Selector metav1.LabelSelector `json:"selector"`
 }
 
-// These are built-in conditions of a job.
+// These are built-in conditions of a CallbackPayload.
 const (
 	// CallbackPayloadSending means that the payload is in the process of being send.
 	CallbackPayloadSending string = "Sending"
