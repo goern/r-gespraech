@@ -21,6 +21,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -43,26 +44,41 @@ var _ = Describe("CallbackUrl controller", func() {
 		interval = time.Millisecond * 250
 	)
 
+	labels := make(map[string]string)
+	labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
+
+	callbackUrl := &v1alpha1.CallbackUrl{
+		TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackUrl"},
+		ObjectMeta: metav1.ObjectMeta{Name: CallbackUrlName, Namespace: "default", Labels: labels},
+		Spec: v1alpha1.CallbackUrlSpec{
+			URL: "https://localhost.local:8181/webhook/xyz_callback",
+			Selector: metav1.LabelSelector{
+				MatchLabels: labels,
+			},
+		},
+		Status: v1alpha1.CallbackUrlStatus{},
+	}
+	callbackPayloadA := &v1alpha1.CallbackPayload{
+		TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackPayload"},
+		ObjectMeta: metav1.ObjectMeta{Name: CallbackPayloadAName, Namespace: "default", Labels: labels},
+		Spec: v1alpha1.CallbackPayloadSpec{
+			Data: "{'adviser-document-id': 'abc123'}",
+			Selector: metav1.LabelSelector{
+				MatchLabels: labels,
+			},
+		},
+		Status: v1alpha1.CallbackPayloadStatus{},
+	}
+
 	Context("When creating a CallbackUrl not having associated CallbackPayload", func() {
 		It("Should have NoAssociatedPayloads Condition", func() {
 			By("By creating a new CallbackUrl")
-			labels := make(map[string]string)
-			labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
-
 			ctx := context.Background()
-			url := &v1alpha1.CallbackUrl{
-				TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackUrl"},
-				ObjectMeta: metav1.ObjectMeta{Name: CallbackUrlName, Namespace: "default", Labels: labels},
-				Spec: v1alpha1.CallbackUrlSpec{
-					URL: "https://localhost.local:8181/webhook/xyz_callback",
-					Selector: metav1.LabelSelector{
-						MatchLabels: labels,
-					},
-				},
-				Status: v1alpha1.CallbackUrlStatus{},
-			}
-			Expect(k8sClient.Create(ctx, url)).Should(Succeed())
 
+			// Create the CallbackURL on the cluster
+			Expect(k8sClient.Create(ctx, callbackUrl)).Should(Succeed())
+
+			// and a lookup that will find it
 			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"}
 			createdCallbackUrl := &v1alpha1.CallbackUrl{}
 
@@ -75,7 +91,7 @@ var _ = Describe("CallbackUrl controller", func() {
 				return true
 			}, timeout, interval).Should(BeTrue())
 
-			Expect(meta.IsStatusConditionPresentAndEqual(url.Status.Conditions, v1alpha1.NoAssociatedPayloads, metav1.ConditionTrue))
+			Expect(meta.IsStatusConditionPresentAndEqual(callbackUrl.Status.Conditions, v1alpha1.NoAssociatedPayloads, metav1.ConditionTrue))
 		})
 	})
 	Context("When creating an associated CallbackPayload", func() {
@@ -85,18 +101,10 @@ var _ = Describe("CallbackUrl controller", func() {
 			labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
 
 			ctx := context.Background()
-			url := &v1alpha1.CallbackPayload{
-				TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackPayload"},
-				ObjectMeta: metav1.ObjectMeta{Name: CallbackPayloadAName, Namespace: "default", Labels: labels},
-				Spec: v1alpha1.CallbackPayloadSpec{
-					Data: "{'adviser-document-id': 'abc123'}",
-					Selector: metav1.LabelSelector{
-						MatchLabels: labels,
-					},
-				},
-				Status: v1alpha1.CallbackPayloadStatus{},
-			}
-			Expect(k8sClient.Create(ctx, url)).Should(Succeed())
+
+			Expect(k8sClient.Create(ctx, callbackPayloadA)).Should(Succeed())
+			fmt.Printf("url=%v", callbackUrl)
+			fmt.Printf("payload=%v", callbackPayloadA)
 
 		})
 	})

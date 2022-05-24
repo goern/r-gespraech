@@ -89,7 +89,6 @@ func (r *CallbackUrlReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	// FIXME this is not persisted to the object?!
 	r.CallbackUrl.Status.Phase = r.CallbackUrl.AggregatePhase()
 
 	// TODO: this needs to be refactored into a validating webhook
