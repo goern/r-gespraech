@@ -9,3 +9,5 @@ webhook:
 leaderElection:
   leaderElect: true
   resourceName: b68f6be9.thoth-station.ninja
+namespaces:
+  - default
