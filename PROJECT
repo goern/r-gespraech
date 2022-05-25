@@ -1,40 +1,31 @@
 domain: thoth-station.ninja
 layout:
-- go.kubebuilder.io/v3
+  - go.kubebuilder.io/v3
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: r-gespraech
 repo: github.com/goern/r-gespraech
 resources:
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: thoth-station.ninja
-  group: erinnerung
-  kind: Callback
-  path: github.com/goern/r-gespraech/api/v1alpha1
-  version: v1alpha1
-  webhooks:
-    defaulting: true
-    webhookVersion: v1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: thoth-station.ninja
-  group: erinnerung
-  kind: CallbackPayload
-  path: github.com/goern/r-gespraech/api/v1alpha1
-  version: v1alpha1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: thoth-station.ninja
-  group: erinnerung
-  kind: CallbackUrl
-  path: github.com/goern/r-gespraech/api/v1alpha1
-  version: v1alpha1
+  - api:
+      crdVersion: v1
+      namespaced: false
+    controller: true
+    domain: thoth-station.ninja
+    group: erinnerung
+    kind: CallbackPayload
+    path: github.com/goern/r-gespraech/api/v1alpha1
+    version: v1alpha1
+  - api:
+      crdVersion: v1
+      namespaced: false
+    controller: true
+    domain: thoth-station.ninja
+    group: erinnerung
+    kind: CallbackUrl
+    path: github.com/goern/r-gespraech/api/v1alpha1
+    version: v1alpha1
+    webhooks:
+      validation: true
+      webhookVersion: v1
 version: "3"

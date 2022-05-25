@@ -32,7 +32,7 @@ const (
 
 // CallbackUrl Condition Types
 const (
-	AssociatedPayloads   string = "AssociatedPayloads "
+	AssociatedPayloads   string = "AssociatedPayloads"
 	NoAssociatedPayloads string = "NoAssociatedPayloads"
 )
 

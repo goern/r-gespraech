@@ -11,6 +11,6 @@ configMapGenerator:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- name: controller
+- digest: sha256:0694b835c5cbffae8bdf61a2a1c72ee2f6632f3f51391eab0e2d2ede9ac4b5bb
+  name: controller
   newName: quay.io/goern/r-gespraech-controller
-  newTag: v0.0.2

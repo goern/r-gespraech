@@ -95,6 +95,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "CallbackUrl")
 		os.Exit(1)
 	}
+	/* We'll just make sure to set `ENABLE_WEBHOOKS=false` when we run locally.
+	 */
+	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
+		if err = (&erinnerungv1alpha1.CallbackUrl{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "CallbackUrl")
+			os.Exit(1)
+		}
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

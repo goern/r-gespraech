@@ -21,7 +21,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -72,14 +71,14 @@ var _ = Describe("CallbackUrl controller", func() {
 
 	Context("When creating a CallbackUrl not having associated CallbackPayload", func() {
 		It("Should have NoAssociatedPayloads Condition", func() {
-			By("By creating a new CallbackUrl")
 			ctx := context.Background()
 
+			By("By creating a new CallbackUrl")
 			// Create the CallbackURL on the cluster
 			Expect(k8sClient.Create(ctx, callbackUrl)).Should(Succeed())
 
 			// and a lookup that will find it
-			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"}
+			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"} // FIME this should happen in a random namespace
 			createdCallbackUrl := &v1alpha1.CallbackUrl{}
 
 			// We'll need to retry getting this newly created CronJob, given that creation may not immediately happen.
@@ -94,17 +93,34 @@ var _ = Describe("CallbackUrl controller", func() {
 			Expect(meta.IsStatusConditionPresentAndEqual(callbackUrl.Status.Conditions, v1alpha1.NoAssociatedPayloads, metav1.ConditionTrue))
 		})
 	})
-	Context("When creating an associated CallbackPayload", func() {
-		It("Should have AssociatedPayloads Condition", func() {
-			By("By creating a new CallbackPayload")
-			labels := make(map[string]string)
-			labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
-
+	Context("When updating the CallbackUrl Status", func() {
+		It("Should have AssociatedPayloads Condition when a new associated CallbackPayload is created", func() {
 			ctx := context.Background()
+			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"}
+			callbackUrl := &v1alpha1.CallbackUrl{}
 
+			By("By checking the CallbackUrl has no associated CallbackPayloads (aka AssociatedPayloads Condition == false!)")
+			Consistently(func() (bool, error) {
+				err := k8sClient.Get(ctx, lookupKey, callbackUrl)
+				if err != nil {
+					return false, err
+				}
+				return meta.IsStatusConditionPresentAndEqual(callbackUrl.Status.Conditions, v1alpha1.AssociatedPayloads, metav1.ConditionTrue), nil
+			}, duration, interval).Should(BeFalse())
+
+			By("By creating a new CallbackPayload")
 			Expect(k8sClient.Create(ctx, callbackPayloadA)).Should(Succeed())
-			fmt.Printf("url=%v", callbackUrl)
-			fmt.Printf("payload=%v", callbackPayloadA)
+
+			By("By checking the CallbackUrl has Conditions")
+			Consistently(func() ([]metav1.Condition, error) {
+				err := k8sClient.Get(ctx, lookupKey, callbackUrl)
+				if err != nil {
+					return nil, err
+				}
+				return callbackUrl.Status.Conditions, nil
+			}, timeout, interval).Should(Not(BeNil()))
+
+			Expect(meta.IsStatusConditionPresentAndEqual(callbackUrl.Status.Conditions, v1alpha1.AssociatedPayloads, metav1.ConditionTrue))
 
 		})
 	})

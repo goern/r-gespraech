@@ -203,9 +203,10 @@ func (r *CallbackUrlReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	for _, unsend := range unsendPayloads {
 		// check if the unsend payload has a job which is not finished yet
 		for _, sender := range senderJobs.Items {
+			// if so, return and continue reconciliation later
 			if sender.ObjectMeta.Labels[adviserIdKey] == unsend.ObjectMeta.Labels[adviserIdKey] {
 				logger.WithValues("payload", unsend.ObjectMeta.Name).WithValues("job", sender.ObjectMeta.Name).Info("unsent payload, with unfinished job")
-				continue
+				return r.UpdateStatusNow(ctx, nil)
 			}
 		}
 
@@ -285,7 +286,7 @@ func (r *CallbackUrlReconciler) findObjectsCallbackPayload(payload client.Object
 	selector, _ := metav1.LabelSelectorAsSelector(&r.CallbackUrl.Spec.Selector) //TODO err handler
 	options := client.ListOptions{
 		LabelSelector: selector,
-		Namespace:     payload.GetNamespace(), // TODO double check if this is the way to go
+		Namespace:     payload.GetNamespace(),
 		Raw:           &metav1.ListOptions{},
 	}
 
