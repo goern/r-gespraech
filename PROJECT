@@ -9,7 +9,7 @@ repo: github.com/goern/r-gespraech
 resources:
   - api:
       crdVersion: v1
-      namespaced: false
+      namespaced: true
     controller: true
     domain: thoth-station.ninja
     group: erinnerung
@@ -18,7 +18,7 @@ resources:
     version: v1alpha1
   - api:
       crdVersion: v1
-      namespaced: false
+      namespaced: true
     controller: true
     domain: thoth-station.ninja
     group: erinnerung

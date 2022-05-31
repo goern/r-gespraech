@@ -112,11 +112,10 @@ func (r *CallbackUrlReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	options := client.ListOptions{
 		LabelSelector: payloadSelector,
-		Namespace:     req.Namespace,
 		Raw:           &metav1.ListOptions{},
 	}
 
-	if err := r.List(ctx, &associatedPayloads, &options); err != nil {
+	if err := r.List(ctx, &associatedPayloads, client.InNamespace(req.Namespace), &options); err != nil {
 		logger.Error(err, "unable to list associated CallbackPayloads")
 		return r.UpdateStatusNow(ctx, err)
 	}
@@ -286,11 +285,10 @@ func (r *CallbackUrlReconciler) findObjectsCallbackPayload(payload client.Object
 	selector, _ := metav1.LabelSelectorAsSelector(&r.CallbackUrl.Spec.Selector) //TODO err handler
 	options := client.ListOptions{
 		LabelSelector: selector,
-		Namespace:     payload.GetNamespace(),
 		Raw:           &metav1.ListOptions{},
 	}
 
-	if err := r.List(context.TODO(), &urls, &options); err != nil {
+	if err := r.List(context.TODO(), &urls, client.InNamespace(payload.GetNamespace()), &options); err != nil {
 		// quietly return nothing and ignore the error
 		return []reconcile.Request{}
 	}

@@ -142,6 +142,9 @@ spec:
                 type: string
             type: object
           namespaces:
+            description: Namespaces is the list of Namespaces we want to operate in
+              TODO this might be an anti-pattern, if the operator is namespace-scoped,
+              do we need to deploy it to each namespace we want to operate in?!
             items:
               type: string
             type: array

@@ -26,3 +26,4 @@ testbin/*
 .vscode/
 certs/
 .env
+TEST-ginkgo-junit_1.xml

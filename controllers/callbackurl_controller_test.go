@@ -43,42 +43,31 @@ var _ = Describe("CallbackUrl controller", func() {
 		interval = time.Millisecond * 250
 	)
 
-	labels := make(map[string]string)
-	labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
+	Context("When creating a CallbackUrl and no CallbackPayload", func() {
+		ctx := context.Background()
 
-	callbackUrl := &v1alpha1.CallbackUrl{
-		TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackUrl"},
-		ObjectMeta: metav1.ObjectMeta{Name: CallbackUrlName, Namespace: "default", Labels: labels},
-		Spec: v1alpha1.CallbackUrlSpec{
-			URL: "https://localhost.local:8181/webhook/xyz_callback",
-			Selector: metav1.LabelSelector{
-				MatchLabels: labels,
-			},
-		},
-		Status: v1alpha1.CallbackUrlStatus{},
-	}
-	callbackPayloadA := &v1alpha1.CallbackPayload{
-		TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackPayload"},
-		ObjectMeta: metav1.ObjectMeta{Name: CallbackPayloadAName, Namespace: "default", Labels: labels},
-		Spec: v1alpha1.CallbackPayloadSpec{
-			Data: "{'adviser-document-id': 'abc123'}",
-			Selector: metav1.LabelSelector{
-				MatchLabels: labels,
-			},
-		},
-		Status: v1alpha1.CallbackPayloadStatus{},
-	}
-
-	Context("When creating a CallbackUrl not having associated CallbackPayload", func() {
 		It("Should have NoAssociatedPayloads Condition", func() {
-			ctx := context.Background()
 
 			By("By creating a new CallbackUrl")
+			labels := make(map[string]string)
+			labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
+
+			callbackUrl := &v1alpha1.CallbackUrl{
+				TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackUrl"},
+				ObjectMeta: metav1.ObjectMeta{Name: CallbackUrlName, Namespace: "default", Labels: labels},
+				Spec: v1alpha1.CallbackUrlSpec{
+					URL: "https://localhost.local:8181/webhook/xyz_callback",
+					Selector: metav1.LabelSelector{
+						MatchLabels: labels,
+					},
+				},
+				Status: v1alpha1.CallbackUrlStatus{},
+			}
 			// Create the CallbackURL on the cluster
 			Expect(k8sClient.Create(ctx, callbackUrl)).Should(Succeed())
 
 			// and a lookup that will find it
-			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"} // FIME this should happen in a random namespace
+			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: callbackUrl.ObjectMeta.Namespace}
 			createdCallbackUrl := &v1alpha1.CallbackUrl{}
 
 			// We'll need to retry getting this newly created CronJob, given that creation may not immediately happen.
@@ -93,13 +82,29 @@ var _ = Describe("CallbackUrl controller", func() {
 			Expect(meta.IsStatusConditionPresentAndEqual(callbackUrl.Status.Conditions, v1alpha1.NoAssociatedPayloads, metav1.ConditionTrue))
 		})
 	})
-	Context("When updating the CallbackUrl Status", func() {
-		It("Should have AssociatedPayloads Condition when a new associated CallbackPayload is created", func() {
-			ctx := context.Background()
-			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: "default"}
-			callbackUrl := &v1alpha1.CallbackUrl{}
+	Context("When creating a CallbackUrl and one associated CallbackPayload", func() {
+		It("Should have AssociatedPayloads Condition", func() {
+			// ctx := context.Background()
+
+			By("By creating a new CallbackUrl")
+			labels := make(map[string]string)
+			labels["adviser.thoth-station.ninja/adviser-id"] = "abc123"
+
+			callbackUrl := &v1alpha1.CallbackUrl{
+				TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackUrl"},
+				ObjectMeta: metav1.ObjectMeta{Name: CallbackUrlName, Namespace: "default", Labels: labels},
+				Spec: v1alpha1.CallbackUrlSpec{
+					URL: "https://localhost.local:8181/webhook/xyz_callback",
+					Selector: metav1.LabelSelector{
+						MatchLabels: labels,
+					},
+				},
+				Status: v1alpha1.CallbackUrlStatus{},
+			}
+			Expect(k8sClient.Create(ctx, callbackUrl)).Should(Succeed())
 
 			By("By checking the CallbackUrl has no associated CallbackPayloads (aka AssociatedPayloads Condition == false!)")
+			lookupKey := types.NamespacedName{Name: CallbackUrlName, Namespace: callbackUrl.ObjectMeta.Namespace}
 			Consistently(func() (bool, error) {
 				err := k8sClient.Get(ctx, lookupKey, callbackUrl)
 				if err != nil {
@@ -109,9 +114,20 @@ var _ = Describe("CallbackUrl controller", func() {
 			}, duration, interval).Should(BeFalse())
 
 			By("By creating a new CallbackPayload")
+			callbackPayloadA := &v1alpha1.CallbackPayload{
+				TypeMeta:   metav1.TypeMeta{APIVersion: "erinnerung.thoth-station.ninja/v1alpha1", Kind: "CallbackPayload"},
+				ObjectMeta: metav1.ObjectMeta{Name: CallbackPayloadAName, Namespace: "default", Labels: labels},
+				Spec: v1alpha1.CallbackPayloadSpec{
+					Data: "{'adviser-document-id': 'abc123'}",
+					Selector: metav1.LabelSelector{
+						MatchLabels: labels,
+					},
+				},
+				Status: v1alpha1.CallbackPayloadStatus{},
+			}
 			Expect(k8sClient.Create(ctx, callbackPayloadA)).Should(Succeed())
 
-			By("By checking the CallbackUrl has Conditions")
+			By("By checking the CallbackUrl has an AssociatedPayloads Conditions set to True")
 			Consistently(func() ([]metav1.Condition, error) {
 				err := k8sClient.Get(ctx, lookupKey, callbackUrl)
 				if err != nil {
