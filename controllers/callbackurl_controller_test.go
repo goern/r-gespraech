@@ -38,12 +38,11 @@ import (
 
 var _ = Describe("CallbackUrl controller", func() {
 	var (
-		testNamespace string = "default"
+		testNamespace       string = "default"
+		testCallbackUrlName string = "abc123"
 	)
 	const (
-		testCallbackUrlName  = "abc123"
-		testAdviserId        = "abc123"
-		CallbackPayloadAName = "abc123"
+		testAdviserId = "abc123"
 
 		timeout  = time.Second * 10
 		duration = time.Second * 10
@@ -52,6 +51,7 @@ var _ = Describe("CallbackUrl controller", func() {
 
 	BeforeEach(func() {
 		testNamespace = "test-" + String(6)
+		testCallbackUrlName = "test-" + String(6)
 		nsSpec := &v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: testNamespace}}
 		Expect(k8sClient.Create(ctx, nsSpec)).Should(Succeed())
 	})

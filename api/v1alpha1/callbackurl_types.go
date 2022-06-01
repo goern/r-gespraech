@@ -58,6 +58,7 @@ type CallbackUrlStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // CallbackUrl is a web service's URL to receive a Callback. The Callback Payload to be send to the
 // web service is determined via the metav1.LabelSelector `selector`.

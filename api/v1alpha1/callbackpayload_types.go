@@ -70,6 +70,7 @@ type CallbackPayloadStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // CallbackPayload is storing the actual Payload Data we want to send back to any Callback URL. The
 // web services receiving the Payload are determined via metav1.LabelSelector `selector`.
